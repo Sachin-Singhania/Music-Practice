@@ -327,6 +327,21 @@ const STRING_STARTING_NOTES = {
   E_low: 4, // Low E (same as high E but different octave)
 }
 
+const CHROMATIC_NOTE_COLORS = {
+  C: "rgb(244, 114, 182)", // Pink/rose
+  "C#": "rgb(217, 179, 140)", // Tan/beige
+  D: "rgb(163, 230, 53)", // Yellow-green
+  "D#": "rgb(34, 197, 94)", // Darker green
+  E: "rgb(16, 185, 129)", // Bright green
+  F: "rgb(110, 231, 183)", // Light green
+  "F#": "rgb(103, 232, 249)", // Light blue/cyan
+  G: "rgb(59, 130, 246)", // Blue
+  "G#": "rgb(147, 51, 234)", // Purple-blue
+  A: "rgb(168, 85, 247)", // Purple
+  "A#": "rgb(236, 72, 153)", // Magenta/pink
+  B: "rgb(249, 115, 22)", // Bright pink/orange
+}
+
 const getFretNote = (stringNote: string, fret: number): string => {
   let startingIndex: number
 
@@ -346,7 +361,9 @@ const getNoteColor = (
   selectedKey: string | null,
   analysis: { roman: string; chord: string }[] | null,
 ): string | null => {
-  if (!selectedKey || !analysis) return null
+  if (!selectedKey || !analysis) {
+    return CHROMATIC_NOTE_COLORS[note as keyof typeof CHROMATIC_NOTE_COLORS] || "rgb(107, 114, 128)"
+  }
 
   const chordIndex = analysis.findIndex((chord) => {
     const chordRoot = chord.chord.replace(/[m°]/g, "")
@@ -979,11 +996,11 @@ export function MusicPracticeApp() {
 
                               {showNote && (
                                 <div
-                                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transform scale-110 transition-all duration-200"
+                                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-black shadow-lg transform scale-110 transition-all duration-200"
                                   style={{
                                     backgroundColor: selectedCircleKey
                                       ? noteColor || "rgb(107, 114, 128)"
-                                      : "rgb(107, 114, 128)",
+                                      : noteColor || "rgb(107, 114, 128)",
                                   }}
                                 >
                                   {note}
