@@ -40,7 +40,18 @@ const ALL_MODES = [
   "Hungarian Scale",
 ]
 
-const TIME_SIGNATURES = ["1/4", "2/4", "3/4", "4/4"]
+const TIME_SIGNATURES = [
+  "2/4",
+  "3/4",
+  "4/4", // Simple time signatures
+  "6/8",
+  "9/8",
+  "12/8", // Compound time signatures
+  "5/4",
+  "7/4", // Complex time signatures
+  "5/8",
+  "7/8", // Complex time signatures with eighth note pulse
+]
 
 const CIRCLE_OF_FIFTHS_MAJOR = ["C", "G", "D", "A", "E", "B", "F#/Gb", "Db", "Ab", "Eb", "Bb", "F"]
 
@@ -550,10 +561,16 @@ export function MusicPracticeApp() {
       const interval = 60000 / bpm[0]
       const beatsPerMeasure = Number.parseInt(timeSignature.split("/")[0])
 
+      const getAccentPattern = (timeSignature: string, beatNumber: number): boolean => {
+        // Only accent beat 1, all other beats are the same
+        return beatNumber === 1
+      }
+
       intervalRef.current = setInterval(() => {
         setBeatCount((prev) => {
           const newCount = (prev % beatsPerMeasure) + 1
-          playClick(newCount === 1)
+          const isAccent = getAccentPattern(timeSignature, newCount)
+          playClick(isAccent)
           return newCount
         })
       }, interval)
@@ -581,6 +598,14 @@ export function MusicPracticeApp() {
   const resetMetronome = () => {
     setIsPlaying(false)
     setBeatCount(0)
+  }
+
+  const handleTimeSignatureChange = (newTimeSignature: string) => {
+    setTimeSignature(newTimeSignature)
+    // Reset beat count to start from 1 when time signature changes during playback
+    if (isPlaying) {
+      setBeatCount(0)
+    }
   }
 
   const generateRandomKeyAndMode = () => {
@@ -722,7 +747,7 @@ export function MusicPracticeApp() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Time Signature</label>
-                <Select value={timeSignature} onValueChange={setTimeSignature}>
+                <Select value={timeSignature} onValueChange={handleTimeSignatureChange}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
