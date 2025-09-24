@@ -342,6 +342,23 @@ const CHROMATIC_NOTE_COLORS = {
   B: "rgb(249, 115, 22)", // Bright pink/orange
 }
 
+const SCALE_FORMULAS = {
+  "Major (Ionian)": [0, 2, 4, 5, 7, 9, 11],
+  Dorian: [0, 2, 3, 5, 7, 9, 10],
+  Phrygian: [0, 1, 3, 5, 7, 8, 10],
+  Lydian: [0, 2, 4, 6, 7, 9, 11],
+  Mixolydian: [0, 2, 4, 5, 7, 9, 10],
+  "Aeolian (Minor)": [0, 2, 3, 5, 7, 8, 10],
+  Locrian: [0, 1, 3, 5, 6, 8, 10],
+  "Major Pentatonic": [0, 2, 4, 7, 9],
+  "Minor Pentatonic": [0, 3, 5, 7, 10],
+  "Minor Blues": [0, 3, 5, 6, 7, 10],
+  "Major Blues": [0, 2, 3, 4, 7, 9],
+  "Melodic Minor": [0, 2, 3, 5, 7, 9, 11],
+  "Harmonic Minor": [0, 2, 3, 5, 7, 8, 11],
+  "Hungarian Scale": [0, 2, 3, 6, 7, 8, 11],
+}
+
 const getFretNote = (stringNote: string, fret: number): string => {
   let startingIndex: number
 
@@ -424,6 +441,59 @@ const isNoteInScale = (
 
     return false
   })
+}
+
+const getScaleNotes = (rootKey: string, mode: string): string[] => {
+  const formula = SCALE_FORMULAS[mode as keyof typeof SCALE_FORMULAS]
+  if (!formula) return []
+
+  const rootIndex = CHROMATIC_NOTES.indexOf(rootKey)
+  if (rootIndex === -1) return []
+
+  return formula.map((interval) => {
+    const noteIndex = (rootIndex + interval) % 12
+    return CHROMATIC_NOTES[noteIndex]
+  })
+}
+
+const getEnharmonicScaleNotes = (rootKey: string, mode: string): string[] => {
+  const formula = SCALE_FORMULAS[mode as keyof typeof SCALE_FORMULAS]
+  if (!formula) return []
+
+  const enharmonicMap: { [key: string]: string } = {
+    "C#": "Db",
+    "D#": "Eb",
+    "F#": "Gb",
+    "G#": "Ab",
+    "A#": "Bb",
+  }
+
+  const enharmonicKey = enharmonicMap[rootKey]
+  if (!enharmonicKey) return []
+
+  // Find the root index using the sharp version first
+  const rootIndex = CHROMATIC_NOTES.indexOf(rootKey)
+  if (rootIndex === -1) return []
+
+  return formula.map((interval) => {
+    const noteIndex = (rootIndex + interval) % 12
+    const note = CHROMATIC_NOTES[noteIndex]
+
+    // Convert sharps to flats for the flat version
+    const flatMap: { [key: string]: string } = {
+      "C#": "Db",
+      "D#": "Eb",
+      "F#": "Gb",
+      "G#": "Ab",
+      "A#": "Bb",
+    }
+
+    return flatMap[note] || note
+  })
+}
+
+const isAccidentalKey = (key: string): boolean => {
+  return key.includes("#") || key.includes("b")
 }
 
 export function MusicPracticeApp() {
@@ -696,6 +766,63 @@ export function MusicPracticeApp() {
                 <div className="space-y-2">
                   <div className="text-sm text-muted-foreground">Mode</div>
                   <div className="text-2xl font-semibold text-accent">{currentMode}</div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="text-sm text-muted-foreground">Notes in Scale</div>
+
+                  {isAccidentalKey(currentKey.name) ? (
+                    <div className="space-y-3">
+                      {/* Sharp version */}
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground font-medium">
+                          {currentKey.name} {currentMode} (Sharp version)
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {getScaleNotes(currentKey.name, currentMode).map((note, index) => (
+                            <div
+                              key={`scale-note-sharp-${index}`}
+                              className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-sm font-semibold"
+                              style={{ color: "rgb(20, 184, 166)" }}
+                            >
+                              {note}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Flat version */}
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground font-medium">
+                          {currentKey.enharmonic} {currentMode} (Flat version)
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {getEnharmonicScaleNotes(currentKey.name, currentMode).map((note, index) => (
+                            <div
+                              key={`scale-note-flat-${index}`}
+                              className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-sm font-semibold"
+                              style={{ color: "rgb(20, 184, 166)" }}
+                            >
+                              {note}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Single scale for natural keys */
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {getScaleNotes(currentKey.name, currentMode).map((note, index) => (
+                        <div
+                          key={`scale-note-${index}`}
+                          className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-sm font-semibold"
+                          style={{ color: "rgb(20, 184, 166)" }}
+                        >
+                          {note}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
