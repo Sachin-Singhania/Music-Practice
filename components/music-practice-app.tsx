@@ -558,8 +558,25 @@ export function MusicPracticeApp() {
 
   useEffect(() => {
     if (isPlaying) {
-      const interval = 60000 / bpm[0]
-      const beatsPerMeasure = Number.parseInt(timeSignature.split("/")[0])
+      const [numerator, denominator] = timeSignature.split("/").map(Number)
+
+      // Determine the note value that gets the beat and calculate interval
+      let interval: number
+      let beatsPerMeasure: number
+
+      if (denominator === 8 && [6, 9, 12].includes(numerator)) {
+        // Compound time signatures: eighth note gets the beat
+        interval = 60000 / (bpm[0] * 2) // Eighth notes are twice as fast as quarter notes
+        beatsPerMeasure = numerator // Count all eighth note beats
+      } else if (denominator === 8) {
+        // Complex time signatures with eighth note pulse (5/8, 7/8)
+        interval = 60000 / (bpm[0] * 2) // Eighth notes are twice as fast as quarter notes
+        beatsPerMeasure = numerator
+      } else {
+        // Simple time signatures: quarter note gets the beat
+        interval = 60000 / bpm[0]
+        beatsPerMeasure = numerator
+      }
 
       const getAccentPattern = (timeSignature: string, beatNumber: number): boolean => {
         // Only accent beat 1, all other beats are the same
@@ -684,7 +701,8 @@ export function MusicPracticeApp() {
     return isMinorKey(key) ? "minor" : "major"
   }
 
-  const beatsPerMeasure = Number.parseInt(timeSignature.split("/")[0])
+  const [numerator, denominator] = timeSignature.split("/").map(Number)
+  const beatsPerMeasure = numerator
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
