@@ -33,7 +33,8 @@ const ALL_MODES = [
   "Locrian",
   "Major Pentatonic",
   "Minor Pentatonic",
-  "Blues Scale",
+  "Minor Blues",
+  "Major Blues",
   "Melodic Minor",
   "Harmonic Minor",
   "Hungarian Scale",
@@ -229,7 +230,7 @@ const CHORD_PROGRESSIONS = {
     { roman: "iv", chord: "Ebm" },
     { roman: "v", chord: "Fm" },
     { roman: "vi", chord: "Gb" },
-    { roman: "vii°", chord: "Ab" },
+    { roman: "VII", chord: "Ab" },
   ],
   Fm: [
     { roman: "i", chord: "Fm" },
@@ -238,7 +239,7 @@ const CHORD_PROGRESSIONS = {
     { roman: "iv", chord: "Bbm" },
     { roman: "v", chord: "Cm" },
     { roman: "vi", chord: "Db" },
-    { roman: "vii°", chord: "Eb" },
+    { roman: "VII", chord: "Eb" },
   ],
   Cm: [
     { roman: "i", chord: "Cm" },
@@ -252,10 +253,10 @@ const CHORD_PROGRESSIONS = {
   Gm: [
     { roman: "i", chord: "Gm" },
     { roman: "ii°", chord: "A°" },
-    { roman: "III", chord: "Bb" },
+    { roman: "iii", chord: "Bb" },
     { roman: "iv", chord: "Cm" },
     { roman: "v", chord: "Dm" },
-    { roman: "VI", chord: "Eb" },
+    { roman: "vi", chord: "Eb" },
     { roman: "VII", chord: "F" },
   ],
   Dm: [
@@ -264,19 +265,19 @@ const CHORD_PROGRESSIONS = {
     { roman: "iii", chord: "F" },
     { roman: "iv", chord: "Gm" },
     { roman: "v", chord: "Am" },
-    { roman: "VI", chord: "Bb" },
+    { roman: "vi", chord: "Bb" },
     { roman: "VII", chord: "C" },
   ],
 }
 
 const CHORD_COLORS = [
-  "rgb(34, 197, 94)", // I - Green (Tonic)
-  "rgb(59, 130, 246)", // ii - Blue (Supertonic)
-  "rgb(168, 85, 247)", // iii - Purple (Mediant)
-  "rgb(249, 115, 22)", // IV - Orange (Subdominant)
-  "rgb(239, 68, 68)", // V - Red (Dominant)
-  "rgb(245, 158, 11)", // vi - Amber (Submediant)
-  "rgb(156, 163, 175)", // vii° - Gray (Leading tone/diminished)
+  "rgb(16, 185, 129)", // I - Emerald (Tonic) - softer green
+  "rgb(59, 130, 246)", // ii - Blue (Supertonic) - keeping blue
+  "rgb(147, 51, 234)", // iii - Purple (Mediant) - deeper purple
+  "rgb(56, 189, 248)", // IV - Sky Blue (Subdominant) - modern dark mode blue instead of harsh orange
+  "rgb(236, 72, 153)", // V - Pink (Dominant) - vibrant pink
+  "rgb(251, 191, 36)", // vi - Amber (Submediant) - warmer amber
+  "rgb(148, 163, 184)", // vii° - Slate (Leading tone/diminished) - softer gray
 ]
 
 const CHORD_FUNCTIONS = {
@@ -311,6 +312,101 @@ const KEY_RELATIONSHIPS = {
   Cm: { relative: "Eb", parallel: "C" },
   Gm: { relative: "Bb", parallel: "G" },
   Dm: { relative: "F", parallel: "D" },
+}
+
+const GUITAR_STRINGS = ["E", "B", "G", "D", "A", "E"] // High to low
+const CHROMATIC_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+
+// Standard guitar tuning starting fret positions
+const STRING_STARTING_NOTES = {
+  E: 4, // High E (4th octave)
+  B: 11,
+  G: 7,
+  D: 2,
+  A: 9,
+  E_low: 4, // Low E (same as high E but different octave)
+}
+
+const getFretNote = (stringNote: string, fret: number): string => {
+  let startingIndex: number
+
+  if (stringNote === "E" && GUITAR_STRINGS.indexOf(stringNote) === 5) {
+    // Low E string
+    startingIndex = STRING_STARTING_NOTES.E_low
+  } else {
+    startingIndex = STRING_STARTING_NOTES[stringNote as keyof typeof STRING_STARTING_NOTES]
+  }
+
+  const noteIndex = (startingIndex + fret) % 12
+  return CHROMATIC_NOTES[noteIndex]
+}
+
+const getNoteColor = (
+  note: string,
+  selectedKey: string | null,
+  analysis: { roman: string; chord: string }[] | null,
+): string | null => {
+  if (!selectedKey || !analysis) return null
+
+  const chordIndex = analysis.findIndex((chord) => {
+    const chordRoot = chord.chord.replace(/[m°]/g, "")
+
+    // Handle enharmonic equivalents
+    const enharmonicMap: { [key: string]: string[] } = {
+      "C#": ["C#", "Db"],
+      "D#": ["D#", "Eb"],
+      "F#": ["F#", "Gb"],
+      "G#": ["G#", "Ab"],
+      "A#": ["A#", "Bb"],
+    }
+
+    // Check direct match
+    if (chordRoot === note) return true
+
+    // Check enharmonic equivalents
+    for (const [key, equivalents] of Object.entries(enharmonicMap)) {
+      if (equivalents.includes(chordRoot) && equivalents.includes(note)) {
+        return true
+      }
+    }
+
+    return false
+  })
+
+  return chordIndex !== -1 ? CHORD_COLORS[chordIndex] : null
+}
+
+const isNoteInScale = (
+  note: string,
+  selectedKey: string | null,
+  analysis: { roman: string; chord: string }[] | null,
+): boolean => {
+  if (!selectedKey || !analysis) return true
+
+  return analysis.some((chord) => {
+    const chordRoot = chord.chord.replace(/[m°]/g, "")
+
+    // Handle enharmonic equivalents
+    const enharmonicMap: { [key: string]: string[] } = {
+      "C#": ["C#", "Db"],
+      "D#": ["D#", "Eb"],
+      "F#": ["F#", "Gb"],
+      "G#": ["G#", "Ab"],
+      "A#": ["A#", "Bb"],
+    }
+
+    // Check direct match
+    if (chordRoot === note) return true
+
+    // Check enharmonic equivalents
+    for (const [key, equivalents] of Object.entries(enharmonicMap)) {
+      if (equivalents.includes(chordRoot) && equivalents.includes(note)) {
+        return true
+      }
+    }
+
+    return false
+  })
 }
 
 export function MusicPracticeApp() {
@@ -426,6 +522,11 @@ export function MusicPracticeApp() {
     if (progression) {
       setCircleAnalysis(progression)
     }
+  }
+
+  const clearCircleSelection = () => {
+    setSelectedCircleKey(null)
+    setCircleAnalysis(null)
   }
 
   const getChordColor = (key: string): string | null => {
@@ -661,7 +762,14 @@ export function MusicPracticeApp() {
         <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Circle of Fifths</CardTitle>
-            <p className="text-center text-muted-foreground">Click any key to see its chord progression</p>
+            <div className="flex items-center justify-center gap-4">
+              <p className="text-center text-muted-foreground">Click any key to see its chord progression</p>
+              {selectedCircleKey && (
+                <Button variant="outline" size="sm" onClick={clearCircleSelection} className="text-xs bg-transparent">
+                  Clear Selection
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-center">
@@ -817,6 +925,112 @@ export function MusicPracticeApp() {
             {!selectedCircleKey && (
               <div className="text-center text-muted-foreground">
                 Click on any key in the circle to see its chord progression
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center">Guitar Fretboard</CardTitle>
+            <p className="text-center text-muted-foreground">
+              {selectedCircleKey
+                ? `Notes highlighted for ${selectedCircleKey} ${getKeyTypeDisplay(selectedCircleKey)}`
+                : "All chromatic notes are displayed in gray. Select a key from the Circle of Fifths above to highlight scale notes with chord function colors."}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <div className="min-w-[800px] bg-gradient-to-r from-slate-800 to-slate-700 rounded-lg p-4 border border-slate-600">
+                {/* Fret numbers */}
+                <div className="flex mb-2">
+                  <div className="w-12"></div> {/* Space for string names */}
+                  {Array.from({ length: 13 }, (_, i) => (
+                    <div key={i} className="flex-1 text-center text-xs text-slate-200 font-medium min-w-[50px]">
+                      {i === 0 ? "Open" : i}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Fretboard strings */}
+                <div className="space-y-1">
+                  {GUITAR_STRINGS.map((stringNote, stringIndex) => (
+                    <div key={`string-${stringIndex}`} className="flex items-center">
+                      {/* String name */}
+                      <div className="w-12 text-right pr-2 text-sm font-bold text-slate-200">{stringNote}</div>
+
+                      {/* Frets */}
+                      <div className="flex flex-1 relative">
+                        {/* String line */}
+                        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-400 transform -translate-y-1/2"></div>
+
+                        {Array.from({ length: 13 }, (_, fret) => {
+                          const note = getFretNote(stringNote, fret)
+                          const noteColor = getNoteColor(note, selectedCircleKey, circleAnalysis)
+                          const showNote = isNoteInScale(note, selectedCircleKey, circleAnalysis)
+
+                          return (
+                            <div
+                              key={`fret-${fret}`}
+                              className="flex-1 flex justify-center items-center min-w-[50px] h-8 relative"
+                            >
+                              {/* Fret marker (except for open string) */}
+                              {fret > 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-slate-500"></div>}
+
+                              {showNote && (
+                                <div
+                                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transform scale-110 transition-all duration-200"
+                                  style={{
+                                    backgroundColor: selectedCircleKey
+                                      ? noteColor || "rgb(107, 114, 128)"
+                                      : "rgb(107, 114, 128)",
+                                  }}
+                                >
+                                  {note}
+                                </div>
+                              )}
+
+                              {/* Fret position markers (3rd, 5th, 7th, 9th, 12th frets) */}
+                              {stringIndex === 2 && [3, 5, 7, 9, 15, 17, 19, 21].includes(fret) && (
+                                <div className="absolute top-10 w-2 h-2 bg-blue-300 rounded-full opacity-60"></div>
+                              )}
+                              {stringIndex === 2 && fret === 12 && (
+                                <div className="absolute top-10 w-3 h-3 bg-blue-200 rounded-full border-2 border-blue-400"></div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Fret position markers row */}
+                <div className="flex mt-2">
+                  <div className="w-12"></div>
+                  {Array.from({ length: 13 }, (_, fret) => (
+                    <div key={`marker-${fret}`} className="flex-1 flex justify-center min-w-[50px]">
+                      {[3, 5, 7, 9, 15, 17, 19, 21].includes(fret) && (
+                        <div className="w-2 h-2 bg-blue-300 rounded-full opacity-60"></div>
+                      )}
+                      {fret === 12 && <div className="w-3 h-3 bg-blue-200 rounded-full border-2 border-blue-400"></div>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {selectedCircleKey && circleAnalysis && (
+              <div className="mt-4 text-center text-sm text-muted-foreground">
+                Colors correspond to chord functions:
+                <span className="inline-flex items-center gap-2 ml-2">
+                  {circleAnalysis.map((chord, index) => (
+                    <span key={index} className="inline-flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHORD_COLORS[index] }}></div>
+                      <span className="text-xs">{chord.roman}</span>
+                    </span>
+                  ))}
+                </span>
               </div>
             )}
           </CardContent>
