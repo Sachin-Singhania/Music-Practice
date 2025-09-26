@@ -479,7 +479,7 @@ const isAccidentalKey = (key: string): boolean => {
 }
 
 export function MusicPracticeApp() {
-  const [bpm, setBpm] = useState([120])
+  const [bpm, setBpm] = useState([60])
   const [timeSignature, setTimeSignature] = useState("4/4")
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentKey, setCurrentKey] = useState(KEYS[0])
