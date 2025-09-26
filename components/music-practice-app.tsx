@@ -40,28 +40,12 @@ const ALL_MODES = [
   "Hungarian Scale",
 ]
 
-const TIME_SIGNATURES = [
-  "2/4",
-  "3/4",
-  "4/4", // Simple time signatures
-  "6/8",
-  "9/8",
-  "12/8", // Compound time signatures
-  "5/4",
-  "7/4", // Complex time signatures
-  "5/8",
-  "7/8", // Complex time signatures with eighth note pulse
-]
+const TIME_SIGNATURES = ["2/4", "3/4", "4/4", "6/8", "9/8", "12/8", "5/4", "7/4", "5/8", "7/8"]
 
 const CIRCLE_OF_FIFTHS_MAJOR = ["C", "G", "D", "A", "E", "B", "F#/Gb", "Db", "Ab", "Eb", "Bb", "F"]
-
 const CIRCLE_OF_FIFTHS_MINOR = ["Am", "Em", "Bm", "F#m", "C#m", "G#m", "D#m/Ebm", "Bbm", "Fm", "Cm", "Gm", "Dm"]
 
-const MAJOR_ROMAN_NUMERALS = ["I", "ii", "iii", "IV", "V", "vi", "vii°"]
-const MINOR_ROMAN_NUMERALS = ["i", "ii°", "III", "iv", "v", "VI", "VII"]
-
 const CHORD_PROGRESSIONS = {
-  // Major Keys
   C: [
     { roman: "I", chord: "C" },
     { roman: "ii", chord: "Dm" },
@@ -170,7 +154,6 @@ const CHORD_PROGRESSIONS = {
     { roman: "vi", chord: "Dm" },
     { roman: "vii°", chord: "E°" },
   ],
-  // Minor Keys
   Am: [
     { roman: "i", chord: "Am" },
     { roman: "ii°", chord: "B°" },
@@ -282,13 +265,13 @@ const CHORD_PROGRESSIONS = {
 }
 
 const CHORD_COLORS = [
-  "rgb(16, 185, 129)", // I - Emerald (Tonic) - softer green
-  "rgb(59, 130, 246)", // ii - Blue (Supertonic) - keeping blue
-  "rgb(147, 51, 234)", // iii - Purple (Mediant) - deeper purple
-  "rgb(56, 189, 248)", // IV - Sky Blue (Subdominant) - modern dark mode blue instead of harsh orange
-  "rgb(236, 72, 153)", // V - Pink (Dominant) - vibrant pink
-  "rgb(251, 191, 36)", // vi - Amber (Submediant) - warmer amber
-  "rgb(148, 163, 184)", // vii° - Slate (Leading tone/diminished) - softer gray
+  "rgb(16, 185, 129)",
+  "rgb(59, 130, 246)",
+  "rgb(147, 51, 234)",
+  "rgb(56, 189, 248)",
+  "rgb(236, 72, 153)",
+  "rgb(251, 191, 36)",
+  "rgb(148, 163, 184)",
 ]
 
 const CHORD_FUNCTIONS = {
@@ -297,7 +280,6 @@ const CHORD_FUNCTIONS = {
 }
 
 const KEY_RELATIONSHIPS = {
-  // Major keys and their relative minors
   C: { relative: "Am", parallel: "Cm" },
   G: { relative: "Em", parallel: "Gm" },
   D: { relative: "Bm", parallel: "Dm" },
@@ -310,7 +292,6 @@ const KEY_RELATIONSHIPS = {
   Eb: { relative: "Cm", parallel: "Ebm" },
   Bb: { relative: "Gm", parallel: "Bbm" },
   F: { relative: "Dm", parallel: "Fm" },
-  // Minor keys and their relative majors
   Am: { relative: "C", parallel: "A" },
   Em: { relative: "G", parallel: "E" },
   Bm: { relative: "D", parallel: "B" },
@@ -325,32 +306,31 @@ const KEY_RELATIONSHIPS = {
   Dm: { relative: "F", parallel: "D" },
 }
 
-const GUITAR_STRINGS = ["E", "B", "G", "D", "A", "E"] // High to low
+const GUITAR_STRINGS = ["E", "B", "G", "D", "A", "E"]
 const CHROMATIC_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
-// Standard guitar tuning starting fret positions
 const STRING_STARTING_NOTES = {
-  E: 4, // High E (4th octave)
+  E: 4,
   B: 11,
   G: 7,
   D: 2,
   A: 9,
-  E_low: 4, // Low E (same as high E but different octave)
+  E_low: 4,
 }
 
 const CHROMATIC_NOTE_COLORS = {
-  C: "rgb(244, 114, 182)", // Pink/rose
-  "C#": "rgb(217, 179, 140)", // Tan/beige
-  D: "rgb(163, 230, 53)", // Yellow-green
-  "D#": "rgb(34, 197, 94)", // Darker green
-  E: "rgb(16, 185, 129)", // Bright green
-  F: "rgb(110, 231, 183)", // Light green
-  "F#": "rgb(103, 232, 249)", // Light blue/cyan
-  G: "rgb(59, 130, 246)", // Blue
-  "G#": "rgb(147, 51, 234)", // Purple-blue
-  A: "rgb(168, 85, 247)", // Purple
-  "A#": "rgb(236, 72, 153)", // Magenta/pink
-  B: "rgb(249, 115, 22)", // Bright pink/orange
+  C: "rgb(244, 114, 182)",
+  "C#": "rgb(217, 179, 140)",
+  D: "rgb(163, 230, 53)",
+  "D#": "rgb(34, 197, 94)",
+  E: "rgb(16, 185, 129)",
+  F: "rgb(110, 231, 183)",
+  "F#": "rgb(103, 232, 249)",
+  G: "rgb(59, 130, 246)",
+  "G#": "rgb(147, 51, 234)",
+  A: "rgb(168, 85, 247)",
+  "A#": "rgb(236, 72, 153)",
+  B: "rgb(249, 115, 22)",
 }
 
 const SCALE_FORMULAS = {
@@ -374,7 +354,6 @@ const getFretNote = (stringNote: string, fret: number): string => {
   let startingIndex: number
 
   if (stringNote === "E" && GUITAR_STRINGS.indexOf(stringNote) === 5) {
-    // Low E string
     startingIndex = STRING_STARTING_NOTES.E_low
   } else {
     startingIndex = STRING_STARTING_NOTES[stringNote as keyof typeof STRING_STARTING_NOTES]
@@ -396,7 +375,6 @@ const getNoteColor = (
   const chordIndex = analysis.findIndex((chord) => {
     const chordRoot = chord.chord.replace(/[m°]/g, "")
 
-    // Handle enharmonic equivalents
     const enharmonicMap: { [key: string]: string[] } = {
       "C#": ["C#", "Db"],
       "D#": ["D#", "Eb"],
@@ -405,10 +383,8 @@ const getNoteColor = (
       "A#": ["A#", "Bb"],
     }
 
-    // Check direct match
     if (chordRoot === note) return true
 
-    // Check enharmonic equivalents
     for (const [key, equivalents] of Object.entries(enharmonicMap)) {
       if (equivalents.includes(chordRoot) && equivalents.includes(note)) {
         return true
@@ -431,7 +407,6 @@ const isNoteInScale = (
   return analysis.some((chord) => {
     const chordRoot = chord.chord.replace(/[m°]/g, "")
 
-    // Handle enharmonic equivalents
     const enharmonicMap: { [key: string]: string[] } = {
       "C#": ["C#", "Db"],
       "D#": ["D#", "Eb"],
@@ -440,10 +415,8 @@ const isNoteInScale = (
       "A#": ["A#", "Bb"],
     }
 
-    // Check direct match
     if (chordRoot === note) return true
 
-    // Check enharmonic equivalents
     for (const [key, equivalents] of Object.entries(enharmonicMap)) {
       if (equivalents.includes(chordRoot) && equivalents.includes(note)) {
         return true
@@ -482,7 +455,6 @@ const getEnharmonicScaleNotes = (rootKey: string, mode: string): string[] => {
   const enharmonicKey = enharmonicMap[rootKey]
   if (!enharmonicKey) return []
 
-  // Find the root index using the sharp version first
   const rootIndex = CHROMATIC_NOTES.indexOf(rootKey)
   if (rootIndex === -1) return []
 
@@ -490,7 +462,6 @@ const getEnharmonicScaleNotes = (rootKey: string, mode: string): string[] => {
     const noteIndex = (rootIndex + interval) % 12
     const note = CHROMATIC_NOTES[noteIndex]
 
-    // Convert sharps to flats for the flat version
     const flatMap: { [key: string]: string } = {
       "C#": "Db",
       "D#": "Eb",
@@ -520,6 +491,9 @@ export function MusicPracticeApp() {
   const [selectedCircleKey, setSelectedCircleKey] = useState<string | null>(null)
   const [circleAnalysis, setCircleAnalysis] = useState<{ roman: string; chord: string }[] | null>(null)
 
+  const [usedKeys, setUsedKeys] = useState<boolean[]>(new Array(12).fill(false))
+  const [usedModes, setUsedModes] = useState<boolean[]>(new Array(14).fill(false))
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
 
@@ -533,6 +507,12 @@ export function MusicPracticeApp() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    // Reset usedModes array when selectedModes changes
+    setUsedModes(new Array(14).fill(false))
+    setUsedKeys(new Array(12).fill(false))
+  }, [selectedModes])
 
   const playClick = useCallback((isAccent = false) => {
     if (!audioContextRef.current) return
@@ -560,26 +540,21 @@ export function MusicPracticeApp() {
     if (isPlaying) {
       const [numerator, denominator] = timeSignature.split("/").map(Number)
 
-      // Determine the note value that gets the beat and calculate interval
       let interval: number
       let beatsPerMeasure: number
 
       if (denominator === 8 && [6, 9, 12].includes(numerator)) {
-        // Compound time signatures: eighth note gets the beat
-        interval = 60000 / (bpm[0] * 2) // Eighth notes are twice as fast as quarter notes
-        beatsPerMeasure = numerator // Count all eighth note beats
+        interval = 60000 / (bpm[0] * 2)
+        beatsPerMeasure = numerator
       } else if (denominator === 8) {
-        // Complex time signatures with eighth note pulse (5/8, 7/8)
-        interval = 60000 / (bpm[0] * 2) // Eighth notes are twice as fast as quarter notes
+        interval = 60000 / (bpm[0] * 2)
         beatsPerMeasure = numerator
       } else {
-        // Simple time signatures: quarter note gets the beat
         interval = 60000 / bpm[0]
         beatsPerMeasure = numerator
       }
 
       const getAccentPattern = (timeSignature: string, beatNumber: number): boolean => {
-        // Only accent beat 1, all other beats are the same
         return beatNumber === 1
       }
 
@@ -619,18 +594,70 @@ export function MusicPracticeApp() {
 
   const handleTimeSignatureChange = (newTimeSignature: string) => {
     setTimeSignature(newTimeSignature)
-    // Reset beat count to start from 1 when time signature changes during playback
     if (isPlaying) {
       setBeatCount(0)
     }
   }
 
   const generateRandomKeyAndMode = () => {
-    const randomKey = KEYS[Math.floor(Math.random() * KEYS.length)]
     const availableModes = selectedModes.length > 0 ? selectedModes : ALL_MODES
-    const randomMode = availableModes[Math.floor(Math.random() * availableModes.length)]
-    setCurrentKey(randomKey)
-    setCurrentMode(randomMode)
+
+    const availableKeyCombinations: Array<{ keyIndex: number; modeIndex: number }> = []
+
+    KEYS.forEach((key, keyIndex) => {
+      availableModes.forEach((mode) => {
+        const modeIndex = ALL_MODES.indexOf(mode)
+        if (!usedKeys[keyIndex] || !usedModes[modeIndex]) {
+          availableKeyCombinations.push({ keyIndex, modeIndex })
+        }
+      })
+    })
+
+    if (availableKeyCombinations.length === 0) {
+      setUsedKeys(new Array(12).fill(false))
+      setUsedModes(new Array(14).fill(false))
+      KEYS.forEach((key, keyIndex) => {
+        availableModes.forEach((mode) => {
+          const modeIndex = ALL_MODES.indexOf(mode)
+          availableKeyCombinations.push({ keyIndex, modeIndex })
+        })
+      })
+    }
+
+    const randomCombination = availableKeyCombinations[Math.floor(Math.random() * availableKeyCombinations.length)]
+    const selectedKey = KEYS[randomCombination.keyIndex]
+    const selectedMode = ALL_MODES[randomCombination.modeIndex]
+
+    setUsedKeys((prev) => {
+      const newUsedKeys = [...prev]
+      newUsedKeys[randomCombination.keyIndex] = true
+      return newUsedKeys
+    })
+
+    setUsedModes((prev) => {
+      const newUsedModes = [...prev]
+      newUsedModes[randomCombination.modeIndex] = true
+      return newUsedModes
+    })
+
+    setCurrentKey(selectedKey)
+    setCurrentMode(selectedMode)
+  }
+
+  const getRemainingCombinations = () => {
+    const availableModes = selectedModes.length > 0 ? selectedModes : ALL_MODES
+    let remainingCount = 0
+
+    KEYS.forEach((key, keyIndex) => {
+      availableModes.forEach((mode) => {
+        const modeIndex = ALL_MODES.indexOf(mode)
+        if (!usedKeys[keyIndex] || !usedModes[modeIndex]) {
+          remainingCount++
+        }
+      })
+    })
+
+    return remainingCount
   }
 
   const toggleModeSelection = (mode: string) => {
@@ -665,18 +692,13 @@ export function MusicPracticeApp() {
       const chordName = chord.chord.replace(/°/g, "")
 
       if (chord.chord.includes("°")) {
-        // Check if the minor version exists in the circle
         const minorVersion = chordName + "m"
         if (key === minorVersion) return true
-
-        // Fallback to the original chord name if minor version doesn't match
         if (chordName === key) return true
       } else {
-        // For non-diminished chords, use exact matching
         if (chordName === key) return true
       }
 
-      // Handle enharmonic equivalents
       if (key.includes("/")) {
         const [key1, key2] = key.split("/")
         return chordName === key1 || chordName === key2
@@ -712,7 +734,7 @@ export function MusicPracticeApp() {
             <Music className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold text-balance">Music Practice Studio</h1>
           </div>
-          <p className="text-muted-foreground text-lg">{"Perfect your timing and explore musical scales"}</p>
+          <p className="text-muted-foreground text-lg">Perfect your timing and explore musical scales</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -793,7 +815,7 @@ export function MusicPracticeApp() {
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
-                Key & Mode Generator
+                Key & Scale Generator
                 <Button variant="ghost" size="sm" onClick={() => setShowSettings(!showSettings)} className="ml-2">
                   <Settings className="h-4 w-4" />
                 </Button>
@@ -807,7 +829,7 @@ export function MusicPracticeApp() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-sm text-muted-foreground">Mode</div>
+                  <div className="text-sm text-muted-foreground">Scale</div>
                   <div className="text-2xl font-semibold text-accent">{currentMode}</div>
                 </div>
 
@@ -816,7 +838,6 @@ export function MusicPracticeApp() {
 
                   {isAccidentalKey(currentKey.name) ? (
                     <div className="space-y-3">
-                      {/* Sharp version */}
                       <div className="space-y-2">
                         <div className="text-xs text-muted-foreground font-medium">
                           {currentKey.name} {currentMode} (Sharp version)
@@ -834,7 +855,6 @@ export function MusicPracticeApp() {
                         </div>
                       </div>
 
-                      {/* Flat version */}
                       <div className="space-y-2">
                         <div className="text-xs text-muted-foreground font-medium">
                           {currentKey.enharmonic} {currentMode} (Flat version)
@@ -853,7 +873,6 @@ export function MusicPracticeApp() {
                       </div>
                     </div>
                   ) : (
-                    /* Single scale for natural keys */
                     <div className="flex flex-wrap justify-center gap-2">
                       {getScaleNotes(currentKey.name, currentMode).map((note, index) => (
                         <div
@@ -871,14 +890,14 @@ export function MusicPracticeApp() {
 
               <Button onClick={generateRandomKeyAndMode} size="lg" className="w-full bg-transparent" variant="outline">
                 <RotateCcw className="h-5 w-5 mr-2" />
-                Generate New Key & Mode
+                Generate New Key & Scale ({getRemainingCombinations()})
               </Button>
 
               {showSettings && (
                 <Card className="bg-muted/30 border-border/50">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
-                      Mode Selection
+                      Scale Selection
                       <Button variant="ghost" size="sm" onClick={toggleAllModes} className="text-xs">
                         {selectedModes.length === ALL_MODES.length ? "Deselect All" : "Select All"}
                       </Button>
@@ -886,7 +905,7 @@ export function MusicPracticeApp() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="text-sm text-muted-foreground mb-3">
-                      Selected: {selectedModes.length} of {ALL_MODES.length} modes
+                      Selected: {selectedModes.length} of {ALL_MODES.length} scales
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                       {ALL_MODES.map((mode) => (
@@ -912,7 +931,7 @@ export function MusicPracticeApp() {
               <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                 <h4 className="font-semibold text-sm">Practice Suggestion:</h4>
                 <p className="text-sm text-muted-foreground">
-                  {"Practice scales, arpeggios, or improvisation in "}
+                  Practice scales, arpeggios, or improvisation in{" "}
                   <span className="font-medium text-foreground">
                     {formatKeyDisplay(currentKey)} {currentMode}
                   </span>
@@ -921,7 +940,7 @@ export function MusicPracticeApp() {
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-semibold text-sm">Active Modes ({selectedModes.length}):</h4>
+                <h4 className="font-semibold text-sm">Active Scales ({selectedModes.length}):</h4>
                 <div className="flex flex-wrap gap-1 text-xs">
                   {selectedModes.map((mode) => (
                     <div
@@ -937,7 +956,7 @@ export function MusicPracticeApp() {
                   ))}
                   {selectedModes.length === 0 && (
                     <div className="p-2 text-muted-foreground text-center w-full">
-                      No modes selected. Click the settings icon to choose modes.
+                      No scales selected. Click the settings icon to choose scales.
                     </div>
                   )}
                 </div>
@@ -1068,7 +1087,6 @@ export function MusicPracticeApp() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {/* Roman numerals row */}
                       <div className="grid grid-cols-7 gap-2 text-center">
                         {circleAnalysis.map((chord, index) => (
                           <div key={`roman-${index}`} className="text-lg font-bold text-muted-foreground">
@@ -1077,7 +1095,6 @@ export function MusicPracticeApp() {
                         ))}
                       </div>
 
-                      {/* Function names row */}
                       <div className="grid grid-cols-7 gap-2 text-center">
                         {circleAnalysis.map((chord, index) => {
                           const functions = isMinorKey(selectedCircleKey)
@@ -1091,7 +1108,6 @@ export function MusicPracticeApp() {
                         })}
                       </div>
 
-                      {/* Chord names row with colors */}
                       <div className="grid grid-cols-7 gap-2 text-center">
                         {circleAnalysis.map((chord, index) => (
                           <div
@@ -1129,9 +1145,8 @@ export function MusicPracticeApp() {
           <CardContent>
             <div className="overflow-x-auto">
               <div className="min-w-[800px] bg-gradient-to-r from-slate-800 to-slate-700 rounded-lg p-4 border border-slate-600">
-                {/* Fret numbers */}
                 <div className="flex mb-2">
-                  <div className="w-12"></div> {/* Space for string names */}
+                  <div className="w-12"></div>
                   {Array.from({ length: 13 }, (_, i) => (
                     <div key={i} className="flex-1 text-center text-xs text-slate-200 font-medium min-w-[50px]">
                       {i === 0 ? "Open" : i}
@@ -1139,16 +1154,12 @@ export function MusicPracticeApp() {
                   ))}
                 </div>
 
-                {/* Fretboard strings */}
                 <div className="space-y-1">
                   {GUITAR_STRINGS.map((stringNote, stringIndex) => (
                     <div key={`string-${stringIndex}`} className="flex items-center">
-                      {/* String name */}
                       <div className="w-12 text-right pr-2 text-sm font-bold text-slate-200">{stringNote}</div>
 
-                      {/* Frets */}
                       <div className="flex flex-1 relative">
-                        {/* String line */}
                         <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-400 transform -translate-y-1/2"></div>
 
                         {Array.from({ length: 13 }, (_, fret) => {
@@ -1161,7 +1172,6 @@ export function MusicPracticeApp() {
                               key={`fret-${fret}`}
                               className="flex-1 flex justify-center items-center min-w-[50px] h-8 relative"
                             >
-                              {/* Fret marker (except for open string) */}
                               {fret > 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-slate-500"></div>}
 
                               {showNote && (
@@ -1177,7 +1187,6 @@ export function MusicPracticeApp() {
                                 </div>
                               )}
 
-                              {/* Fret position markers (3rd, 5th, 7th, 9th, 12th frets) */}
                               {stringIndex === 2 && [3, 5, 7, 9, 15, 17, 19, 21].includes(fret) && (
                                 <div className="absolute top-10 w-2 h-2 bg-blue-300 rounded-full opacity-60"></div>
                               )}
@@ -1192,7 +1201,6 @@ export function MusicPracticeApp() {
                   ))}
                 </div>
 
-                {/* Fret position markers row */}
                 <div className="flex mt-2">
                   <div className="w-12"></div>
                   {Array.from({ length: 13 }, (_, fret) => (
