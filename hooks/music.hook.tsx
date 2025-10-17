@@ -9,7 +9,7 @@ export function UseGenerateRandomKeyAndMode() {
     const [usedModes, setUsedModes] = useState<boolean[]>(new Array(14).fill(true))
     const [countofCombinations, setCountOfCombinations] = useState(0);
     const [Combinations, setCombinations] = useState<Array<{ keyIndex: number; modeIndex: number }>>([]);
-    const [selectedModes, setSelectedModes] = useState<string[]>(ALL_MODES.slice(0, 1))
+    const [selectedModes, setSelectedModes] = useState<string[]>(ALL_MODES.slice(0, 7))
     useEffect(() => {
         setCombinations([]);
         setUsedModes(new Array(14).fill(true))
