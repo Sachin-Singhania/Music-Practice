@@ -10,6 +10,7 @@ export function UseGenerateRandomKeyAndMode() {
     const [countofCombinations, setCountOfCombinations] = useState(0);
     const [Combinations, setCombinations] = useState<Array<{ keyIndex: number; modeIndex: number }>>([]);
     const [selectedModes, setSelectedModes] = useState<string[]>(ALL_MODES.slice(0, 7))
+    const [index, setindex] = useState(0);
     useEffect(() => {
         setCombinations([]);
         setUsedModes(new Array(14).fill(true))
@@ -52,13 +53,16 @@ export function UseGenerateRandomKeyAndMode() {
         return arr;
     }
     const generateRandomKeyAndMode2 = () => {
-        if (countofCombinations === 0 || Combinations.length === 0) {
+        console.log(index,countofCombinations,Combinations.length);
+        if (index==Combinations.length && countofCombinations === 0) {
             setUsedKeys(new Array(12).fill(true))
             setUsedModes(new Array(14).fill(true))
             setCountOfCombinations(getRemainingCombinations());
-            getAvialableCombinations()
+            getAvialableCombinations();
+            setindex(0);
+            setCombinations(shuffleArray(Combinations));
         }
-        const randomCombination = Combinations.pop();
+        const randomCombination = Combinations[index];
         if (randomCombination) {
             const selectedKey = KEYS[randomCombination.keyIndex]
             const selectedMode = ALL_MODES[randomCombination.modeIndex]
@@ -67,6 +71,7 @@ export function UseGenerateRandomKeyAndMode() {
             setCurrentKey(selectedKey)
             setCurrentMode(selectedMode)
             setCountOfCombinations((prev) => (prev > 0 ? prev - 1 : 0));
+            setindex((prev) => prev + 1);
         }
     }
     const toggleModeSelection = (mode: string) => {
