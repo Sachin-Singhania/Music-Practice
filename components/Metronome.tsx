@@ -1,5 +1,5 @@
 "use client"
-import { Slider } from "@radix-ui/react-slider";
+import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import { TIME_SIGNATURES } from "@/lib/constants";
