@@ -17,6 +17,7 @@ export function UseGenerateRandomKeyAndMode() {
         setUsedKeys(new Array(12).fill(true))
         setCountOfCombinations(getRemainingCombinations());
         getAvialableCombinations()
+        setindex(0);
     }, [selectedModes])
     useEffect(() => {
         if (Combinations.length !== 0) {
