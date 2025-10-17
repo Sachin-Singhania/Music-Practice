@@ -11,16 +11,29 @@ export function UseGenerateRandomKeyAndMode() {
     const [Combinations, setCombinations] = useState<Array<{ keyIndex: number; modeIndex: number }>>([]);
     const [selectedModes, setSelectedModes] = useState<string[]>(ALL_MODES.slice(0, 7))
     const [index, setindex] = useState(0);
+    
     useEffect(() => {
-        setCombinations([]);
-        setUsedModes(new Array(14).fill(true))
-        setUsedKeys(new Array(12).fill(true))
+        const newUsedModes = new Array(14).fill(true);
+        const newUsedKeys = new Array(12).fill(true);
+        setUsedModes(newUsedModes);
+        setUsedKeys(newUsedKeys);
         setCountOfCombinations(getRemainingCombinations());
-        getAvialableCombinations()
+        const availableModes = selectedModes.length > 0 ? selectedModes : ALL_MODES;
+        const availableKeyCombinations: Array<{ keyIndex: number; modeIndex: number }> = [];
+        KEYS.forEach((key, keyIndex) => {
+            availableModes.forEach((mode) => {
+                const modeIndex = ALL_MODES.indexOf(mode);
+                if (newUsedKeys[keyIndex] || newUsedModes[modeIndex]) {
+                    availableKeyCombinations.push({ keyIndex, modeIndex });
+                }
+            });
+        });
+        setCombinations(shuffleArray(availableKeyCombinations));
         setindex(0);
-    }, [selectedModes])
+    }, [selectedModes]);
     useEffect(() => {
         if (Combinations.length !== 0) {
+            setindex(0);
             generateRandomKeyAndMode2();
         }
     }, [Combinations])
@@ -33,7 +46,6 @@ export function UseGenerateRandomKeyAndMode() {
     }
     const getAvialableCombinations = () => {
         const availableModes = selectedModes.length > 0 ? selectedModes : ALL_MODES
-
         const availableKeyCombinations: Array<{ keyIndex: number; modeIndex: number }> = []
         KEYS.forEach((key, keyIndex) => {
             availableModes.forEach((mode, index) => {
@@ -54,13 +66,14 @@ export function UseGenerateRandomKeyAndMode() {
         return arr;
     }
     const generateRandomKeyAndMode2 = () => {
-        console.log(index,countofCombinations,Combinations.length);
+        console.log ( index, countofCombinations, Combinations.length);
         if (index==Combinations.length && countofCombinations === 0) {
             setUsedKeys(new Array(12).fill(true))
             setUsedModes(new Array(14).fill(true))
             setCountOfCombinations(getRemainingCombinations());
             getAvialableCombinations();
             setindex(0);
+            setCombinations(shuffleArray(Combinations));
             setCombinations(shuffleArray(Combinations));
         }
         const randomCombination = Combinations[index];
